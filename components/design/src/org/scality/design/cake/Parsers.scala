@@ -32,5 +32,4 @@ trait Parsers {
 
   implicit def elem(e: Elem): Parser[Elem] =
     Parser { in => Success(in.first) }
-
 }

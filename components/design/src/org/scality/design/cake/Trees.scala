@@ -4,15 +4,12 @@ package cake
 
 trait Trees {
   trait Tree
+  case object OnlyTree extends Tree
 }
 
-trait LowTrees extends Trees {
-  object OnlyTree extends Tree
-}
+trait LowTrees extends Trees
 
-trait HighTrees extends Trees {
-  object OnlyTree extends Tree
-}
+trait HighTrees extends Trees
 
 trait Tokens {
   trait Token

@@ -2,8 +2,7 @@ package org.scality
 package design
 package cake
 
-import scala.util.parsing.input.CharArrayReader
-import scala.util.parsing.input.Reader
+import scala.util.parsing.input.{ CharArrayReader, Reader }
 
 trait Scanners extends Parsers {
 
