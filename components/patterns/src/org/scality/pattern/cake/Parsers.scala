@@ -1,5 +1,5 @@
 package org.scality
-package design
+package pattern
 package cake
 
 import scala.util.parsing.input.Reader

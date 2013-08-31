@@ -1,5 +1,5 @@
 package org.scality
-package design
+package pattern
 package cake
 
 object XScanner extends Scanners with Tokens {

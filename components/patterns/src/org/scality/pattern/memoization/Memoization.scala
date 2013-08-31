@@ -1,5 +1,5 @@
 package org.scality
-package design
+package pattern
 package memoization
 
 import scala.collection.mutable.WeakHashMap

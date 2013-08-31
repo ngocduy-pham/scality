@@ -1,5 +1,5 @@
 package org.scality
-package design
+package pattern
 package utilitybelt
 
 object English extends Counting with Greetings {

@@ -1,4 +1,6 @@
-package org.scality.design.utilitybelt
+package org.scality
+package pattern
+package utilitybelt
 
 trait Localizable {
   def act(action: Int)(implicit config: Counting with Greetings): Unit =

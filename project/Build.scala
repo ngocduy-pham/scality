@@ -56,8 +56,10 @@ object ScalityBuild extends Build {
     parallelExecution in Test := false
   )
 
-  lazy val scality = Project(id = "scality", base = file("."), settings = scalaSettings) aggregate (designPattern, fileIO)
-  lazy val designPattern = Project(id = "scality-design-pattern", base = file("components/design"), settings = scalaSettings)
-  lazy val fileIO = Project(id = "scality-file-io", base = file("components/fileio"), settings = scalaSettings) dependsOn designPattern
+  lazy val scality = Project(id = "scality", base = file("."), settings = scalaSettings) aggregate (patterns, io, tools, specs)
+  lazy val patterns = Project(id = "scality-patterns", base = file("components/patterns"), settings = scalaSettings)
+  lazy val io = Project(id = "scality-io", base = file("components/io"), settings = scalaSettings) dependsOn patterns
+  lazy val tools = Project(id = "scality-tools", base = file("components/tools"), settings = scalaSettings) dependsOn io
+  lazy val specs = Project(id = "scality-specs", base = file("components/specs"), settings = scalaSettings)
 
 }
