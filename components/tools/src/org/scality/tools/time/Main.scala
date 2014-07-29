@@ -13,5 +13,4 @@ object Main extends IntervalTracker {
       Thread sleep 10
     }
   }
-
 }

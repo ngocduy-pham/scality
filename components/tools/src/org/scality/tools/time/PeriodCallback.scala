@@ -10,14 +10,9 @@ trait PeriodCallback {
   implicit lazy val executor: ExecutionContext = global
 
   class RunAfter[T](time: Long) extends ((=> T) => Future[T]) {
-    def run(f: => T): Future[T] =
-      apply(f)
-
-    def repeat(f: => T): Future[T] =
-      repeatAfter(time)(f)
-
-    def apply(f: => T): Future[T] =
-      runAfter(time)(f)
+    def run(f: => T): Future[T] = apply(f)
+    def repeat(f: => T): Future[T] = repeatAfter(time)(f)
+    def apply(f: => T): Future[T] = runAfter(time)(f)
   }
 
   def after[T](time: Long): RunAfter[T] =
@@ -32,10 +27,8 @@ trait PeriodCallback {
 
   def repeatAfter[T](time: Long)(f: => T): Future[T] =
     runAfter(time)(f)(true)
-
 }
 
 object PeriodCallback extends PeriodCallback {
-  def apply[T](time: Long): RunAfter[T] =
-    after[T](time)
+  def apply[T](time: Long): RunAfter[T] = after[T](time)
 }

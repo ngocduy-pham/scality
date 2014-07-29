@@ -5,15 +5,16 @@ import scala.compat.Platform
 
 trait IntervalTracker {
 
-  /** @tparam V        the type of values to keep track of
-    * @tparam M        the type of tracking metric
-    *
-    * @param size      the number of timestamps to keep
-    * @param interval  the duration between two time points, in seconds
-    * @param default   the default value for the tracking metric
-    * @param change    the way to update the tracking of one given value
-    * @param sum       the way to compute the summary of the whole duration
-    */
+  /**
+   * @tparam V        the type of values to keep track of
+   * @tparam M        the type of tracking metric
+   *
+   * @param size      the number of timestamps to keep
+   * @param interval  the duration between two time points, in seconds
+   * @param default   the default value for the tracking metric
+   * @param change    the way to update the tracking of one given value
+   * @param sum       the way to compute the summary of the whole duration
+   */
   class Tracker[V, M](size: Int,
                       interval: Long,
                       default: M,
@@ -43,5 +44,4 @@ trait IntervalTracker {
         case (res, (_, track)) => sum(res, track.getOrElse(value, default))
       }
   }
-
 }
