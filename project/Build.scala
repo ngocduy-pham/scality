@@ -1,7 +1,9 @@
 import java.io.File
+
 import sbt._
 import Keys._
 import Process._
+
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
@@ -20,46 +22,31 @@ object ScalityBuild extends Build {
       .setPreference(AlignSingleLineCaseStatements, true)
   }
 
-  lazy val scalaOrg = "org.scala-lang"
-  // scala version + resolver
-  lazy val scalaSettings = Defaults.defaultSettings ++ formatSettings ++ Seq(
-    // scalaHome := Some(file(Path.userHome + "/work/devl/scalac/scala-virtualized/build/pack")),
-    // scalaOrganization := scalaOrg,
-    scalaVersion := "2.10.2",
-    scalacOptions ++= List("-unchecked", "-deprecation"),
-    resolvers in ThisBuild += ScalaToolsSnapshots,
-    resolvers += "OSSH" at "https://oss.sonatype.org/content/groups/public",
-    resolvers += Resolver.sonatypeRepo("snapshots"),
+  val buildSettings = Defaults.coreDefaultSettings ++ SbtScalariform.scalariformSettings ++ formatSettings ++
+    Seq(
+      version := Version.scalityVersion,
+      scalaVersion in ThisBuild := Version.scalaVersion,
+      scalacOptions in Compile ++= List("-Xmax-classfile-name", "143"), // ecryptfs limit, see https://bugs.launchpad.net/ecryptfs/+bug/344878 and https://issues.scala-lang.org/browse/SI-3623
+      scalacOptions in Compile += "-feature",
+      //scalacOptions in ThisBuild += "-Xprint:typer",
+      scalacOptions += "-Dscalac.patmat.analysisBudget=off",
+      scalacOptions += "-deprecation",
+      scalacOptions += "-language:reflectiveCalls",
+      scalaSource in Compile <<= baseDirectory(_ / "src"),
+      scalaSource in Test <<= baseDirectory(_ / "test"),
+      resolvers := Seq(
+        Resolver.file("Local Ivy Repository", file(Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+        "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases",
+        "Typesafe Maven Repository" at "http://repo.typesafe.com/typesafe/maven-releases",
+        "OSSH" at "https://oss.sonatype.org/content/groups/public"),
+      libraryDependencies := Seq(
+        "org.scala-lang" % "scala-library" % Version.scalaVersion,
+        "org.scala-lang" % "scala-compiler" % Version.scalaVersion)
+      ) ++ super.settings
 
-    // paths - so we don't need to have src/main/scala ... just src/ test/ and resources/
-    scalaSource in Compile <<= baseDirectory(_ / "src"),
-    scalaSource in Test <<= baseDirectory(_ / "test"),
-    // resourceDirectory in Compile <<= baseDirectory(_ / "resources"),
-
-    // target directory outside of base directory will cause sbteclipse to crash
-    // target := new File("D:/junk/scala/scality/target"),
-
-    // sbteclipse needs some info on source directories:
-    unmanagedSourceDirectories in Compile <<= (scalaSource in Compile)(Seq(_)),
-    unmanagedSourceDirectories in Test <<= (scalaSource in Test)(Seq(_)),
-
-    // add the library, reflect and the compiler as libraries
-    libraryDependencies <<= scalaVersion(ver => Seq(
-      scalaOrg % "scala-library" % ver,
-      // scalaOrg % "scala-reflect" % ver,
-      scalaOrg % "scala-compiler" % ver
-      // "org.scalatest" % "scalatest_2.10" % "2.0.M6-SNAP7" % "test",
-      // "junit" % "junit" % "4.8.1" % "test" // we need JUnit explicitly
-    )),
-
-    // testing
-    parallelExecution in Test := false
-  )
-
-  lazy val scality = Project(id = "scality", base = file("."), settings = scalaSettings) aggregate (patterns, io, tools, specs)
-  lazy val patterns = Project(id = "scality-patterns", base = file("components/patterns"), settings = scalaSettings)
-  lazy val io = Project(id = "scality-io", base = file("components/io"), settings = scalaSettings) dependsOn patterns
-  lazy val tools = Project(id = "scality-tools", base = file("components/tools"), settings = scalaSettings) dependsOn io
-  lazy val specs = Project(id = "scality-specs", base = file("components/specs"), settings = scalaSettings)
-
+  lazy val scality = Project(id = "scality", base = file("."), settings = buildSettings) aggregate (patterns, io, tools, specs)
+  lazy val patterns = Project(id = "scality-patterns", base = file("components/patterns"), settings = buildSettings)
+  lazy val io = Project(id = "scality-io", base = file("components/io"), settings = buildSettings) dependsOn patterns
+  lazy val tools = Project(id = "scality-tools", base = file("components/tools"), settings = buildSettings) dependsOn io
+  lazy val specs = Project(id = "scality-specs", base = file("components/specs"), settings = buildSettings)
 }
